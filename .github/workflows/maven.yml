@@ -18,7 +18,9 @@ jobs:
         node_version: [ 8, 10, 12 ]
         os: [ ubuntu-latest, windows-latest, macos-latest ]
   build:
+
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
@@ -27,6 +29,5 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
         cache: maven
-
     - name: Build with Maven
       run: mvn -B package --file pom.xml
