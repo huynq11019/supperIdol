@@ -1,9 +1,13 @@
 server:
   port: 8081
+  servlet:
+    context-path: ${SERVICE_PATH:/}
 spring:
   application:
     name: FPRO
     time_zone: GMT+7
+  profiles:
+    active: ${ENV:dev}
   jackson:
     serialization:
       indent-output: true
@@ -11,11 +15,11 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:mysql://ls-4858f5b1ba4c5b862804146ab97d20fce7e7f6c7.cjlmnrhfxrnx.ap-southeast-1.rds.amazonaws.com:3306/fpro
-#    url: jdbc:mysql://localhost:3306/mikepro
     username: dbmasteruser
     password: $-_$0f2uX+z37fg3aXw_2pAs0unO%nkk
-#    username: sa
-#    password: 123123
+    #    url: jdbc:mysql://localhost:3306/mikepro
+    #    username: sa
+    #    password: 123123
     hikari:
       auto-commit: false
       maximum-pool-size: 5
@@ -28,24 +32,14 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     show-sql: true
     open-in-view: false
-    #    properties:
-    #      hibernate.id.new_generator_mappings: true
-    #      hibernate.connection.provider_disables_autocommit: true
-    #      hibernate.cache.use_second_level_cache: true
-    #      hibernate.cache.use_query_cache: false
-    #      hibernate.temp.use_jdbc_metadata_defaults: false
-    ##      hibernate.cache.region.factory_class: com.hazelcast.hibernate.HazelcastCacheRegionFactory
-    #      hibernate.cache.hazelcast.instance_name: nagakawa_guarantee
-    #      hibernate.cache.hazelcast.shutdown_on_session_factory_close: false
-    #      hibernate.cache.use_minimal_puts: true
-    #      hibernate.cache.hazelcast.use_lite_member: true
-    #      hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS: 30
-    #      hibernate.generate_statistics: true
     hibernate:
       ddl-auto: update
-#      naming:
-#        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-#        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
   servlet:
     multipart:
       max-file-size: 10MB
