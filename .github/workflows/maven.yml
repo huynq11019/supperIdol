@@ -10,6 +10,12 @@ on:
     branches: [ master ]
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+#      - run: mvn clean install -DskipTests
+      - run: mvn clean test
   build:
 
     runs-on: ubuntu-latest
