@@ -67,6 +67,15 @@ spring:
     embedded: true
     timeout: 10s
 
+security:
+  authentication:
+    jwt:
+      key-store: mbamc.jks
+      key-store-password: 5tgbNHY^7ujm
+      key-alias: viz
+      access-token-expires-in: 1h
+      refresh-token-expires-in: 30d
+      email-token-expires-in: 10m
 validation:
   password-regex: ^(?=.*[a-z])(?=.*[A-Z]).{8,}$ #password ?t nh?t 8 k? t? , 1 ch? th??ng, 1 ch? hoa .. advance ^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,}$
   username-regex: '^[a-zA-Z0-9]([._](?![._])|[a-zA-Z0-9]){1,72}[a-zA-Z0-9]$' #ky tu so + chu , k? t? (. _), do dai tu 3 den 75
