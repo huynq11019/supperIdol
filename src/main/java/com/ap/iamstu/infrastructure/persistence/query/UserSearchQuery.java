@@ -3,8 +3,6 @@ package com.ap.iamstu.infrastructure.persistence.query;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
-
 @Data
 @SuperBuilder
 public class UserSearchQuery {

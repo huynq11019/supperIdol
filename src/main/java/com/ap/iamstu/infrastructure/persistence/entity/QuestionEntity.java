@@ -2,43 +2,49 @@ package com.ap.iamstu.infrastructure.persistence.entity;
 
 import com.ap.iamstu.infrastructure.support.constant.ValidateConstraint;
 import com.ap.iamstu.infrastructure.support.entity.AuditableEntity;
-import com.ap.iamstu.infrastructure.support.enums.Scope;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "permission")
+@Table(name = "question")
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class PermissionEntity extends AuditableEntity {
+public class QuestionEntity extends AuditableEntity {
+
     @Id
     @Column(name = "id", length = ValidateConstraint.LENGTH.ID_MAX_LENGTH, nullable = false)
     private String id;
 
-    @Column(name = "scope", length = ValidateConstraint.LENGTH.ENUM_MAX_LENGTH, nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Scope scope;
+    private String content;
 
-    @Column(name = "resource_code", length = ValidateConstraint.LENGTH.CODE_MAX_LENGTH, nullable = false)
-    private String resourceCode;
+    private Boolean isRequired;
 
-    @Column(name = "name", length = ValidateConstraint.LENGTH.NAME_MAX_LENGTH, nullable = false)
-    private String name;
+    private String type;
 
-    @Column(name = "deleted", nullable = false)
-    private Boolean deleted;
+    private String answer;
+
+    private String answerType;
+
+    private String responseTable;
+
+    private Integer precise;
+
+    private Boolean isMultiChoice;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        PermissionEntity that = (PermissionEntity) o;
+        QuestionEntity that = (QuestionEntity) o;
         return id != null && Objects.equals(id, that.id);
     }
 
