@@ -8,6 +8,8 @@ spring:
     time_zone: GMT+7
   profiles:
     active: ${ENV:dev}
+  thymeleaf:
+    cache: true
   jackson:
     serialization:
       indent-output: true
@@ -45,10 +47,10 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   mail:
-    host: smtp.yandex.com
-    port: 465
-    username: tiemchung@evotek.vn
-    password: tmcacannqrzkatgc
+    host: smtp.gmail.com
+    port: 587
+    username: vosong9201@gmail.com
+    password: 0943390338abc
     protocol: smtp
     properties:
       mail.transport.protocol: smtp
@@ -98,3 +100,8 @@ validation:
   address-max-length: 255
   description-max-length: 255
   int-number-max-length: 10
+
+app:
+  iam:
+    deep-link-reset-password: dark.vn/reset-password
+    domain: http://localhost:8081
