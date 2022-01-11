@@ -29,11 +29,11 @@ public class RegexPermissionEvaluator implements PermissionEvaluator {
                     AuthorizationError.NOT_SUPPORTED_AUTHENTICATION, authentication.getClass().getName());
         }
         UserAuthentication userAuthentication = (UserAuthentication) authentication;
-
+        // root được full quyền truy cập
         if (userAuthentication.isRoot()) {
             return true;
         }
-
+        // nếu không có quyền truy cập thì trả về false
         boolean isPermitted = userAuthentication.getGrantedPermissions().stream()
                 .anyMatch(p -> Pattern.matches(p, requiredPermission));
 

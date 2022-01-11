@@ -21,6 +21,8 @@
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <hibernate-search.version>5.11.9.Final</hibernate-search.version>
         <problem-spring-web.version>0.25.0</problem-spring-web.version>
+        <ultraq.version>2.5.3</ultraq.version>
+
     </properties>
     <dependencies>
         <dependency>
@@ -180,7 +182,16 @@
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>9.10.1</version>
         </dependency>
-
+        <!--Thymeleaf-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+            <version>${ultraq.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
