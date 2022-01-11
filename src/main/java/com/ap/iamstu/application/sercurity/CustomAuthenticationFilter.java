@@ -1,5 +1,6 @@
 package com.ap.iamstu.application.sercurity;
 
+import com.ap.iamstu.application.service.AuthorityService;
 import com.ap.iamstu.infrastructure.support.enums.AccountType;
 import com.ap.iamstu.infrastructure.support.error.AuthenticationError;
 import com.ap.iamstu.infrastructure.support.exeption.ResponseException;

@@ -6,6 +6,7 @@
  */
 package com.ap.iamstu.application.service.impl;
 
+import com.ap.iamstu.application.service.UserLoginService;
 import com.ap.iamstu.infrastructure.persistence.entity.UserLoginEntity;
 import com.ap.iamstu.infrastructure.persistence.repository.UserLoginRepository;
 import lombok.RequiredArgsConstructor;

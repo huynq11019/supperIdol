@@ -4,7 +4,7 @@
  * Copyright (C) 2021 by Evotek. All right reserved.
  * This software is the confidential and proprietary information of Evotek
  */
-package com.ap.iamstu.application.service.impl;
+package com.ap.iamstu.application.service;
 
 
 import com.ap.iamstu.infrastructure.persistence.entity.UserLoginEntity;
