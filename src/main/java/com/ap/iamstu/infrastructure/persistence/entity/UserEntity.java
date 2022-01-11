@@ -3,6 +3,7 @@ import com.ap.iamstu.infrastructure.support.constant.ValidateConstraint;
 import com.ap.iamstu.infrastructure.support.entity.AuditableEntity;
 import com.ap.iamstu.infrastructure.support.enums.AccountType;
 import com.ap.iamstu.infrastructure.support.enums.Gender;
+import com.ap.iamstu.infrastructure.support.enums.UserStatus;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -61,6 +62,10 @@ public class UserEntity extends AuditableEntity {
 
     @Column(name = "last_auth_change_at")
     private Instant lastAuthChangeAt;
+
+    @Column(name = "status", length = ValidateConstraint.LENGTH.ENUM_MAX_LENGTH, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserStatus status = UserStatus.ACTIVE;
 
     @Override
     public boolean equals(Object o) {
