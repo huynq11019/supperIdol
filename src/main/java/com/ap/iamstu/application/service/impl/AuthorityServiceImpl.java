@@ -1,7 +1,7 @@
 package com.ap.iamstu.application.service.impl;
 
-import com.ap.iamstu.application.sercurity.AuthorityService;
 import com.ap.iamstu.application.sercurity.UserAuthority;
+import com.ap.iamstu.application.service.AuthorityService;
 import com.ap.iamstu.infrastructure.persistence.entity.RoleEntity;
 import com.ap.iamstu.infrastructure.persistence.entity.RolePermissionEntity;
 import com.ap.iamstu.infrastructure.persistence.entity.UserEntity;
