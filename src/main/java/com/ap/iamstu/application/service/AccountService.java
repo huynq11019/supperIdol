@@ -19,7 +19,7 @@ public interface AccountService {
 
     User myProfile();
 
-    User updateProfile(UserUpdateProfileRequest request);
+    User meUpdateProfile(UserUpdateProfileRequest request);
 
     User changePassword(UserChangePasswordRequest request, HttpServletRequest httpServletRequest);
 

@@ -34,10 +34,12 @@ public class AuthFailCacheServiceImpl implements AuthFailCacheService {
     @Override
     public BadRequestError checkLoginFail(String username) {
         try {
+            // check user đăng nhập sai lần đầu
             if (!isExisted(LOGIN_FAIL_COUNT_CACHE, username)) {
                 Optional.ofNullable(cacheManager.getCache(LOGIN_FAIL_COUNT_CACHE))
                         .ifPresent(cache -> cache.put(username, 1L));
             } else {
+
                 Integer loginFailCount = (Integer) Optional.ofNullable(cacheManager.getCache(LOGIN_FAIL_COUNT_CACHE))
                         .map(cache -> cache.get(username))
                         .filter(valueWrapper -> Objects.nonNull(valueWrapper.get())).get().get();
@@ -49,9 +51,11 @@ public class AuthFailCacheServiceImpl implements AuthFailCacheService {
                 }
 
                 if (loginFailCount > REACH_MAX_LOGIN_FAIL_COUNT) {
+                    // login fail quá 5 lần thì đưa user vào danh sách block
                     Optional.ofNullable(cacheManager.getCache(BLOCKED_USER_LOGIN_CACHE))
                             .ifPresent(cache -> cache.put(username, 1L));
                 } else {
+                    // nếu đăng nhập sai thì tăng số lần đăng nhập sai lên 1
                     final Integer newLoginFailCount = loginFailCount + 1;
                     Optional.ofNullable(cacheManager.getCache(LOGIN_FAIL_COUNT_CACHE))
                             .ifPresent(cache -> cache.put(username, newLoginFailCount));
@@ -62,6 +66,7 @@ public class AuthFailCacheServiceImpl implements AuthFailCacheService {
                         return BadRequestError.LOGIN_FAIL_BLOCK_ACCOUNT;
                     }
                     if (newLoginFailCount > REACH_WARNING_BEFORE_BLOCK_LOGIN_FAIL_COUNT) {
+                        // nếu đăng nhập sai quá 3 lần thì bắt đầu cảnh báo
                         return BadRequestError.LOGIN_FAIL_WARNING_BEFORE_BLOCK;
                     }
                 }

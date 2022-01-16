@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
@@ -49,4 +50,54 @@ public class User extends AuditableDomain {
 
     @JsonIgnore
     private List<UserRole> userRoles;
+
+    public User( String username, String password, String fullName, String email, String phoneNumber, LocalDate dayOfBirth, Gender gender, List<Role> roles, AuthenticationType authenticationType, String organizationId, String employeeCode, String title, String description, String departmentName, String avatarFileId, String avatarFileUrl, AccountType accountType, List<UserRole> userRoles) {
+        this.id = UUID.randomUUID().toString();
+        this.username = username;
+        this.password = password;
+        this.fullName = fullName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.dayOfBirth = dayOfBirth;
+        this.gender = gender;
+        this.roles = roles;
+        this.authenticationType = authenticationType;
+        this.organizationId = organizationId;
+        this.employeeCode = employeeCode;
+        this.title = title;
+        this.description = description;
+        this.departmentName = departmentName;
+        this.avatarFileId = avatarFileId;
+        this.avatarFileUrl = avatarFileUrl;
+        this.accountType = accountType;
+        this.userRoles = userRoles;
+
+        this.deleted = false;
+
+    }
+
+    public void update(String username, String password, String fullName, String email, String phoneNumber, LocalDate dayOfBirth) {
+        this.username = username;
+        this.password = password;
+        this.fullName = fullName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.dayOfBirth = dayOfBirth;
+    }
+
+    public void inactive() {
+        this.deleted = true;
+    }
+
+    public void active() {
+        this.deleted = false;
+    }
+
+//    public void createPermission(String permissionId) {
+//        this.roles.add(new Role(permissionId));
+//    }
+//
+//    public void updatePermission(String permissionId) {
+//        this.roles.add(new Role(permissionId));
+//    }
 }
