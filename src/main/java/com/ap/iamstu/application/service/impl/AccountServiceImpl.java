@@ -3,8 +3,10 @@ package com.ap.iamstu.application.service.impl;
 import com.ap.iamstu.application.dto.request.*;
 import com.ap.iamstu.application.dto.response.AuthToken;
 import com.ap.iamstu.application.mapper.AutoMapper;
+import com.ap.iamstu.application.mapper.UserMapper;
 import com.ap.iamstu.application.sercurity.AuthenticationProperties;
 import com.ap.iamstu.application.sercurity.TokenProvider;
+import com.ap.iamstu.application.sercurity.UserAuthentication;
 import com.ap.iamstu.application.sercurity.UserAuthority;
 import com.ap.iamstu.application.sercurity.request.LoginRequest;
 import com.ap.iamstu.application.service.AccountService;
@@ -13,17 +15,19 @@ import com.ap.iamstu.application.service.AuthorityService;
 import com.ap.iamstu.application.service.UserService;
 import com.ap.iamstu.domain.User;
 import com.ap.iamstu.domain.command.UserRegisterCmd;
+import com.ap.iamstu.domain.command.UserUpdateCmd;
 import com.ap.iamstu.infrastructure.persistence.entity.UserEntity;
 import com.ap.iamstu.infrastructure.persistence.repository.UserRepository;
 import com.ap.iamstu.infrastructure.support.enums.UserStatus;
 import com.ap.iamstu.infrastructure.support.error.BadRequestError;
+import com.ap.iamstu.infrastructure.support.error.NotFoundError;
 import com.ap.iamstu.infrastructure.support.exeption.ResponseException;
+import com.ap.iamstu.infrastructure.support.util.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,10 +50,10 @@ public class AccountServiceImpl implements AccountService {
     private final AuthorityService authorityService;
     private final AuthFailCacheService authFailCacheService;
     private final AuthenticationManager authenticationManager;
+    private final UserMapper userMapper;
 
-
-
-    public AccountServiceImpl(UserService userService, UserRepository userRepository, AutoMapper autoMapper, PasswordEncoder passwordEncoder, TokenProvider tokenProvider, AuthenticationProperties authenticationProperties, AuthorityService authorityService, AuthFailCacheService authFailCacheService, AuthenticationManager authenticationManager) {
+    public AccountServiceImpl(UserService userService, UserRepository userRepository, AutoMapper autoMapper, PasswordEncoder passwordEncoder, TokenProvider tokenProvider, AuthenticationProperties authenticationProperties, AuthorityService authorityService, AuthFailCacheService authFailCacheService,
+                              AuthenticationManager authenticationManager, UserMapper userMapper) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.autoMapper = autoMapper;
@@ -59,7 +63,9 @@ public class AccountServiceImpl implements AccountService {
         this.authorityService = authorityService;
         this.authFailCacheService = authFailCacheService;
         this.authenticationManager = authenticationManager;
+        this.userMapper = userMapper;
     }
+
 
     @Override
     public AuthToken login(LoginRequest request) {
@@ -123,11 +129,25 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public User myProfile() {
-        return null;
+        UserAuthentication userAuthentication = SecurityUtils.authentication();
+        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUserName(userAuthentication.getName());
+        if (optionalUserEntity.isEmpty()) {
+            throw new ResponseException(NotFoundError.USER_NOT_FOUND.getMessage(), NotFoundError.USER_NOT_FOUND);
+        }
+        User user = this.userMapper.toDomain(optionalUserEntity.get());
+        log.info("User {}", user);
+        return user;
     }
 
     @Override
-    public User updateProfile(UserUpdateProfileRequest request) {
+    public User meUpdateProfile( UserUpdateProfileRequest request) {
+        UserAuthentication userAuthentication = SecurityUtils.authentication();
+        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUserName(userAuthentication.getName());
+        if (optionalUserEntity.isEmpty()) {
+            throw new ResponseException(NotFoundError.USER_NOT_FOUND.getMessage(), NotFoundError.USER_NOT_FOUND);
+        }
+        UserUpdateCmd userCreateCmd = this.autoMapper.from(request);
+        User user = new User();
         return null;
     }
 
