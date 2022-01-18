@@ -1,5 +1,6 @@
 package com.ap.iamstu.presentation;
 
+
 import com.ap.iamstu.application.dto.request.*;
 import com.ap.iamstu.application.dto.response.AuthToken;
 import com.ap.iamstu.application.sercurity.UserAuthority;
@@ -17,10 +18,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-@Api(tags = "Authentication Resource")
+@Api(tags = "Account Resource ( chứa các thông tin liên quan đến tài khoản )")
 @RequestMapping("/api")
 @Validated
 public interface AccountResource {
+
     @ApiOperation(value = "Get my profile")
     @GetMapping("/me/profile")
     Response<User> myProfile();
@@ -57,18 +59,6 @@ public interface AccountResource {
     @ApiOperation(value = "Logout device")
     @PostMapping("/logout")
     Response<Boolean> logout(@RequestBody(required = false) LogoutRevokeRequest logoutRevokeRequest);
-
-//    @ApiOperation(value = "Get buildings by current user")
-//    @GetMapping("/me/buildings")
-//    Response<List<BuildingDTO>> getBuildingIdsByCurrentUser();
-//
-//    @ApiOperation(value = "Get floors by current user")
-//    @GetMapping("/me/buildings/{buildingId}/floors")
-//    Response<List<FloorDTO>> getFloorByCurrentUser(@PathVariable("buildingId") String buildingId);
-//
-//    @ApiOperation(value = "Get Organization By Role of Current User Login")
-//    @GetMapping("/me/organizations")
-//    Response<List<Organization>> findByCurrentUser();
 
     @ApiOperation(value = "Init reset password")
     @PostMapping("/account/reset-password/init")

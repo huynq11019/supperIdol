@@ -9,16 +9,14 @@ import com.ap.iamstu.application.sercurity.TokenProvider;
 import com.ap.iamstu.application.sercurity.UserAuthentication;
 import com.ap.iamstu.application.sercurity.UserAuthority;
 import com.ap.iamstu.application.sercurity.request.LoginRequest;
-import com.ap.iamstu.application.service.AccountService;
-import com.ap.iamstu.application.service.AuthFailCacheService;
-import com.ap.iamstu.application.service.AuthorityService;
-import com.ap.iamstu.application.service.UserService;
+import com.ap.iamstu.application.service.*;
 import com.ap.iamstu.domain.User;
 import com.ap.iamstu.domain.command.UserRegisterCmd;
 import com.ap.iamstu.domain.command.UserUpdateCmd;
 import com.ap.iamstu.infrastructure.persistence.entity.UserEntity;
 import com.ap.iamstu.infrastructure.persistence.repository.UserRepository;
 import com.ap.iamstu.infrastructure.support.enums.UserStatus;
+import com.ap.iamstu.infrastructure.support.error.AuthenticationError;
 import com.ap.iamstu.infrastructure.support.error.BadRequestError;
 import com.ap.iamstu.infrastructure.support.error.NotFoundError;
 import com.ap.iamstu.infrastructure.support.exeption.ResponseException;
@@ -34,6 +32,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -51,9 +50,10 @@ public class AccountServiceImpl implements AccountService {
     private final AuthFailCacheService authFailCacheService;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
+    private final SendEmailService sendEmailService;
 
     public AccountServiceImpl(UserService userService, UserRepository userRepository, AutoMapper autoMapper, PasswordEncoder passwordEncoder, TokenProvider tokenProvider, AuthenticationProperties authenticationProperties, AuthorityService authorityService, AuthFailCacheService authFailCacheService,
-                              AuthenticationManager authenticationManager, UserMapper userMapper) {
+                              AuthenticationManager authenticationManager, UserMapper userMapper, SendEmailService sendEmailService) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.autoMapper = autoMapper;
@@ -64,6 +64,7 @@ public class AccountServiceImpl implements AccountService {
         this.authFailCacheService = authFailCacheService;
         this.authenticationManager = authenticationManager;
         this.userMapper = userMapper;
+        this.sendEmailService = sendEmailService;
     }
 
 
@@ -110,7 +111,31 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AuthToken refreshToken(RefreshTokenRequest request) {
-        return null;
+        if (!this.tokenProvider.validateToken(request.getRefreshToken())) {
+            throw new ResponseException(AuthenticationError.INVALID_REFRESH_TOKEN);
+        }
+
+        String userId = this.tokenProvider.getSubject(request.getRefreshToken());
+        UserEntity userEntity = this.userRepository.findById(userId).orElseThrow(() ->
+                new ResponseException(NotFoundError.USER_NOT_FOUND));
+        if (!UserStatus.ACTIVE.equals(userEntity.getStatus())) {
+            authFailCacheService.checkLoginFail(userEntity.getUserName());
+            throw new ResponseException(BadRequestError.LOGIN_FAIL_BLOCK_ACCOUNT);
+        }
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userEntity.getUserName(),
+                "",
+                new ArrayList<>());
+        String accessToken = this.tokenProvider.createToken(authentication, userEntity.getId());
+        String refreshToken = this.tokenProvider.createRefreshToken(userEntity.getId());
+
+        long expiresIn = this.authenticationProperties.getAccessTokenExpiresIn().toSeconds();
+
+        return AuthToken.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .tokenType(AuthToken.TOKEN_TYPE_BEARER)
+                .expiresIn(expiresIn)
+                .build();
     }
 
     @Override
@@ -129,14 +154,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public User myProfile() {
-        UserAuthentication userAuthentication = SecurityUtils.authentication();
-        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUserName(userAuthentication.getName());
-        if (optionalUserEntity.isEmpty()) {
-            throw new ResponseException(NotFoundError.USER_NOT_FOUND.getMessage(), NotFoundError.USER_NOT_FOUND);
-        }
-        User user = this.userMapper.toDomain(optionalUserEntity.get());
-        log.info("User {}", user);
-        return user;
+//        UserAuthentication userAuthentication = SecurityUtils.authentication();
+//        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUserName(userAuthentication.getName());
+//        if (optionalUserEntity.isEmpty()) {
+//            throw new ResponseException(NotFoundError.USER_NOT_FOUND.getMessage(), NotFoundError.USER_NOT_FOUND);
+//        }
+//        User user = this.userMapper.toDomain(optionalUserEntity.get());
+//        log.info("User {}", user);
+//        return user;
+        return currentAccount();
+
     }
 
     @Override
@@ -153,31 +180,103 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public User changePassword(UserChangePasswordRequest request, HttpServletRequest httpServletRequest) {
-        return null;
+        User user = currentAccount();
+        if (!this.passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new ResponseException(BadRequestError.WRONG_PASSWORD);
+        }
+
+        // invalid token and refresh token
+        tokenProvider.invalidJwt(tokenProvider.resolveToken(httpServletRequest), request.getRefreshToken());
+
+        String newEncodedPassword = this.passwordEncoder.encode(request.getNewPassword());
+        user.changePassword(newEncodedPassword);
+        this.userService.save(user);
+        return user;
     }
 
     @Override
     public String currentUser() {
-        return null;
+        Optional<String> currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser.isEmpty()) {
+            throw new ResponseException(AuthenticationError.UNAUTHORISED);
+        }
+        return currentUser.get();
     }
 
     @Override
     public UserAuthority myAuthorities() {
-        return null;
+        String me = currentUserId();
+        return this.authorityService.getUserAuthority(me);
     }
 
     @Override
     public void logout(LogoutRevokeRequest logoutRevokeRequest) {
+        // Neu mobile logout thi revoke token device
+//        if (Objects.nonNull(logoutRevokeRequest.getDeviceToken())) {
+//            logoutRevokeRequest.setUserId(currentUserId());
+//            notificationClient.revokeDevice(logoutRevokeRequest);
+//        }
 
+        // revoke device -> invalid token and refresh token
+        String accessToken;
+        if (SecurityUtils.getCurrentUserJWT().isPresent()) {
+            accessToken = SecurityUtils.getCurrentUserJWT().get();
+            tokenProvider.invalidJwt(accessToken, logoutRevokeRequest.getRefreshToken());
+        }
     }
 
     @Override
     public void forgotPassword(EmailForgotPasswordRequest request) throws MessagingException {
+        Optional<UserEntity> userEntityByEmail = userRepository.findByEmail(request.getEmail());
+        if (userEntityByEmail.isEmpty()) {
+            log.warn("Password reset requested for non existing mail '{}'", request.getEmail());
+            throw new ResponseException(BadRequestError.EMAIL_NOT_EXISTED_IN_SYSTEM);
+        }
 
+//        if (userEntityByEmail.get().getAuthenticationType().equals(AuthenticationType.LDAP)) {
+//            throw new ResponseException(BadRequestError.ACCOUNT_EMPLOYEE_CAN_NOT_CHANGE_PASSWORD);
+//        }
+
+        User user = userMapper.toDomain(userEntityByEmail.get());
+        String token = tokenProvider.createTokenSendEmail(user.getId(), request.getEmail());
+        sendEmailService.send(user, TEMPLATE_NAME, TITLE_KEY, token);
     }
 
     @Override
     public void resetPassword(ForgotPasswordRequest request) {
-
+        String userId = tokenProvider.validateEmailToken(request.getToken());
+        User user = userService.ensureExited(userId);
+        if (!Objects.equals(request.getPassword(), request.getRepeatPassword())) {
+            throw new ResponseException(BadRequestError.REPEAT_PASSWORD_DOES_NOT_MATCH);
+        }
+        String encodedPassword = this.passwordEncoder.encode(request.getPassword());
+        user.changePassword(encodedPassword);
+        userService.save(user);
     }
+
+    public String currentUserId() {
+        Optional<String> currentUserLoginId = SecurityUtils.getCurrentUserLoginId();
+        if (currentUserLoginId.isEmpty()) {
+            throw new ResponseException(AuthenticationError.UNAUTHORISED);
+        }
+        return currentUserLoginId.get();
+    }
+
+    private User currentAccount() {
+        String me = currentUser();
+        UserEntity userEntity = ensureUserExisted(me);
+        //        user.enrichOrganization(getOrganization(user.getOrganizationId()));
+        return this.userMapper.toDomain(userEntity);
+    }
+
+
+    private UserEntity ensureUserExisted(String username) {
+        return this.userRepository.findByUserName(username).orElseThrow(() ->
+                new ResponseException(NotFoundError.USER_NOT_FOUND));
+    }
+
+//    private Organization getOrganization(String organizationId) {
+//        Optional<OrganizationEntity> optionalOrganizationEntity = organizationRepository.findById(organizationId);
+//        return optionalOrganizationEntity.map(organizationEntityMapper::toDomain).orElse(null);
+//    }
 }
