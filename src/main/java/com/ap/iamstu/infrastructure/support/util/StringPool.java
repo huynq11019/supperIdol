@@ -101,6 +101,7 @@ public class StringPool {
 	public static final String UTF8 = "UTF-8";
 	public static final String XLSX = ".xlsx";
 	public static final String ZUL = ".zul";
+	public static final String LOCATION = "location";
 
 	static {
 		for (int i = 0; i < 128; i++) {

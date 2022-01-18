@@ -1,5 +1,6 @@
 package com.ap.iamstu.presentation;
 
+import com.ap.iamstu.application.dto.request.UserCreateRequest;
 import com.ap.iamstu.application.dto.request.UserInternalCreateRequest;
 import com.ap.iamstu.domain.User;
 import com.ap.iamstu.infrastructure.support.query.response.Response;
@@ -14,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 
-@Api(tags = "User Resource")
+@Api(tags = "User Resource (Quản lý các thông tin của tài khoản)")
 @RequestMapping("/api")
 @Validated
 public interface UserResource {
     @ApiOperation(value = "Create user")
     @PostMapping("/users/internal")
     @PreAuthorize("hasPermission(null, 'user:create')")
-    Response<User> createUserInternal(@RequestBody @Valid UserInternalCreateRequest request);
+    Response<User> createUserInternal(@RequestBody @Valid UserCreateRequest request);
 
     @ApiOperation(value = "Create user student")
     @PostMapping("/users/student")

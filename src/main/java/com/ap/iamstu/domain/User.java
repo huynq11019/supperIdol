@@ -1,5 +1,6 @@
 package com.ap.iamstu.domain;
 
+import com.ap.iamstu.domain.command.UserCreateCmd;
 import com.ap.iamstu.infrastructure.support.domain.AuditableDomain;
 import com.ap.iamstu.infrastructure.support.enums.AccountType;
 import com.ap.iamstu.infrastructure.support.enums.AuthenticationType;
@@ -51,6 +52,21 @@ public class User extends AuditableDomain {
     @JsonIgnore
     private List<UserRole> userRoles;
 
+    public User(UserCreateCmd userCreateCmd) {
+        this.id = UUID.randomUUID().toString();
+        this.username = userCreateCmd.getUsername();
+        this.password = userCreateCmd.getPassword();
+        this.fullName = userCreateCmd.getFullName();
+        this.email = userCreateCmd.getEmail();
+        this.phoneNumber = userCreateCmd.getPhoneNumber();
+        this.dayOfBirth = userCreateCmd.getDayOfBirth();
+        this.gender = userCreateCmd.getGender();
+        this.avatarFileId = userCreateCmd.getAvatarFileId();
+        this.roles = userCreateCmd.getRoles();
+        this.deleted = userCreateCmd.getDeleted();
+
+    }
+
     public User( String username, String password, String fullName, String email, String phoneNumber, LocalDate dayOfBirth, Gender gender, List<Role> roles, AuthenticationType authenticationType, String organizationId, String employeeCode, String title, String description, String departmentName, String avatarFileId, String avatarFileUrl, AccountType accountType, List<UserRole> userRoles) {
         this.id = UUID.randomUUID().toString();
         this.username = username;
@@ -93,6 +109,11 @@ public class User extends AuditableDomain {
         this.deleted = false;
     }
 
+    public void changePassword(String newPassword) {
+
+        this.password = newPassword;
+        this.lastAuthChangeAt = Instant.now();
+    }
 //    public void createPermission(String permissionId) {
 //        this.roles.add(new Role(permissionId));
 //    }

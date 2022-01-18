@@ -1,5 +1,6 @@
 package com.ap.iamstu.presentation.impl;
 
+import com.ap.iamstu.application.dto.request.UserCreateRequest;
 import com.ap.iamstu.application.dto.request.UserInternalCreateRequest;
 import com.ap.iamstu.application.service.UserService;
 import com.ap.iamstu.domain.User;
@@ -13,7 +14,7 @@ public class UserResourceImpl implements UserResource {
         this.userService = userService;
     }
     @Override
-    public Response<User> createUserInternal(UserInternalCreateRequest request) {
+    public Response<User> createUserInternal(UserCreateRequest request) {
         return Response.of(userService.createUser(request));
     }
 

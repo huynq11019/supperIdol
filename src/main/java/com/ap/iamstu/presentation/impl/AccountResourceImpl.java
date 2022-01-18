@@ -7,6 +7,10 @@ import com.ap.iamstu.application.sercurity.request.LoginRequest;
 import com.ap.iamstu.application.service.AccountService;
 import com.ap.iamstu.domain.User;
 import com.ap.iamstu.infrastructure.support.query.response.Response;
+import com.ap.iamstu.infrastructure.support.util.Const;
+import com.ap.iamstu.infrastructure.support.util.HttpUtil;
+import com.ap.iamstu.infrastructure.support.util.StringPool;
+import com.ap.iamstu.infrastructure.support.util.StringUtil;
 import com.ap.iamstu.presentation.AccountResource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.view.RedirectView;
@@ -27,61 +31,74 @@ public class AccountResourceImpl implements AccountResource {
 
     @Override
     public Response<User> myProfile() {
-        return null;
+        return Response.of(accountService.myProfile());
     }
 
     @Override
     public Response<User> updateProfile(UserUpdateProfileRequest request) {
-        return null;
+        return Response.of(
+                accountService.meUpdateProfile(request)
+        );
     }
 
     @Override
     public Response<User> changePassword(UserChangePasswordRequest request, HttpServletRequest httpServletRequest) {
-        return null;
+        return Response.of(accountService.changePassword(request, httpServletRequest));
     }
 
     @Override
     public Response<AuthToken> authenticate(LoginRequest request) {
-        return null;
+        return Response.of(accountService.login(request));
     }
 
     @Override
     public Response<AuthToken> refreshToken(RefreshTokenRequest request) {
-        return null;
+        return Response.of(accountService.refreshToken(request));
     }
 
     @Override
     public Response<User> register(UserRegisterRequest request) {
-        return null;
+        return Response.of(accountService.register(request));
     }
 
     @Override
     public Response<String> me() {
-        return null;
+        return Response.of(accountService.currentUser());
     }
 
     @Override
     public Response<UserAuthority> myAuthorities() {
-        return null;
+        return Response.of(accountService.myAuthorities());
     }
 
     @Override
     public Response<Boolean> logout(LogoutRevokeRequest logoutRevokeRequest) {
-        return null;
+        accountService.logout(logoutRevokeRequest);
+        return Response.of(Boolean.TRUE);
     }
 
     @Override
     public Response<Boolean> initResetPassword(EmailForgotPasswordRequest request) throws MessagingException {
-        return null;
+        accountService.forgotPassword(request);
+        return Response.of(Boolean.TRUE);
     }
 
     @Override
     public Response<Boolean> resetPassword(ForgotPasswordRequest request) {
-        return null;
+        accountService.resetPassword(request);
+        return Response.of(Boolean.TRUE);
     }
 
     @Override
     public RedirectView redirect(String token, HttpServletResponse response) {
-        return null;
+        String url;
+        if (!StringUtil.isBlank(urlResetPassword)) {
+            url = String.format(urlResetPassword, token);
+        } else {
+            url = Const.DEFAULT_LINK_RESET_PASSWORD;
+        }
+        response.setHeader(StringPool.LOCATION, url);
+        response.setStatus(HttpUtil.REDIRECTION_CODE);
+        return new RedirectView(url);
     }
 }
