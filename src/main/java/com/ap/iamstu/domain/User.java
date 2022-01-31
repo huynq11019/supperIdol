@@ -5,6 +5,7 @@ import com.ap.iamstu.infrastructure.support.domain.AuditableDomain;
 import com.ap.iamstu.infrastructure.support.enums.AccountType;
 import com.ap.iamstu.infrastructure.support.enums.AuthenticationType;
 import com.ap.iamstu.infrastructure.support.enums.Gender;
+import com.ap.iamstu.infrastructure.support.util.IdUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.*;
@@ -53,7 +54,7 @@ public class User extends AuditableDomain {
     private List<UserRole> userRoles;
 
     public User(UserCreateCmd userCreateCmd) {
-        this.id = UUID.randomUUID().toString();
+        this.id = IdUtils.nextId();
         this.username = userCreateCmd.getUsername();
         this.password = userCreateCmd.getPassword();
         this.fullName = userCreateCmd.getFullName();

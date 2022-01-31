@@ -5,7 +5,8 @@ import lombok.Getter;
 @Getter
 public enum NotFoundError implements ResponseError {
     NOT_FOUND(4040001, "Not found"),
-    USER_NOT_FOUND(4040001, "User not found: {0}"),
+    USER_NOT_FOUND(4040002, "User not found: {0}"),
+    CLASS_NOT_FOUND(4040003, "Class not found: {0}"),
     ;
 
     private final Integer code;
