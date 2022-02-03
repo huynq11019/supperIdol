@@ -1,14 +1,10 @@
 package com.ap.iamstu.application.mapper;
 
 
-import com.ap.iamstu.application.dto.request.TeacherCreateRequest;
-import com.ap.iamstu.application.dto.request.UserCreateRequest;
-import com.ap.iamstu.application.dto.request.UserRegisterRequest;
-import com.ap.iamstu.application.dto.request.UserUpdateProfileRequest;
-import com.ap.iamstu.domain.command.TeacherCreateCmd;
-import com.ap.iamstu.domain.command.UserCreateCmd;
-import com.ap.iamstu.domain.command.UserRegisterCmd;
-import com.ap.iamstu.domain.command.UserUpdateCmd;
+import com.ap.iamstu.application.dto.request.*;
+import com.ap.iamstu.domain.command.*;
+import com.ap.iamstu.infrastructure.persistence.query.ClassSearchQuery;
+import com.ap.iamstu.infrastructure.persistence.query.UserSearchQuery;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -21,4 +17,12 @@ public interface AutoMapper {
     UserUpdateCmd from(UserUpdateProfileRequest request);
 
     TeacherCreateCmd from (TeacherCreateRequest  teacherCreateRequest);
+
+    ClassCreateCmd from(ClassCreateRequest classCreateRequest);
+//
+    ClassUpdateCmd toUpdate (ClassUpdateRequest classUpdateRequest);
+
+    ClassSearchQuery form(ClassSearchRequest classSearchRequest);
+
+    UserSearchQuery toQuery(UserSearchRequest userSearchRequest);
 }

@@ -23,4 +23,5 @@ public class AuditableDomain implements Serializable {
     protected String lastModifiedBy;
 
     protected Instant lastModifiedAt;
+
 }
