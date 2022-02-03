@@ -4,6 +4,7 @@ package com.ap.iamstu.application.mapper;
 import com.ap.iamstu.application.dto.request.*;
 import com.ap.iamstu.domain.command.*;
 import com.ap.iamstu.infrastructure.persistence.query.ClassSearchQuery;
+import com.ap.iamstu.infrastructure.persistence.query.UserSearchQuery;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -22,4 +23,6 @@ public interface AutoMapper {
     ClassUpdateCmd toUpdate (ClassUpdateRequest classUpdateRequest);
 
     ClassSearchQuery form(ClassSearchRequest classSearchRequest);
+
+    UserSearchQuery toQuery(UserSearchRequest userSearchRequest);
 }
