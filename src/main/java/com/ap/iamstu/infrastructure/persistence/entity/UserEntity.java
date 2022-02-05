@@ -17,7 +17,7 @@ import java.util.Objects;
 //        @Index(name = "user_username_idx", columnList = "username"),
 //        @Index(name = "user_deleted_idx", columnList = "deleted")
 //})
-@Table(name = "users")
+@Table(name = "user")
 @Getter
 @Setter
 @ToString
@@ -29,7 +29,7 @@ public class UserEntity extends AuditableEntity {
     private String id;
 
     @Column(name = "username", length = ValidateConstraint.LENGTH.CODE_MAX_LENGTH, nullable = false)
-    private String userName;
+    private String username;
 
     @Column(name = "password", length = ValidateConstraint.LENGTH.VALUE_MAX_LENGTH)
     private String password;

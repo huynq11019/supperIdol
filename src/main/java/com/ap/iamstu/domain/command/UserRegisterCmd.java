@@ -15,5 +15,5 @@ public class UserRegisterCmd {
     private String password;
     private String fullName;
     private String email;
-    private String mobile;
+    private String phoneNumber;
 }

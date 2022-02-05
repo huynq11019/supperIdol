@@ -57,7 +57,8 @@ public enum BadRequestError implements ResponseError {
     LOGIN_FAIL_BECAUSE_YOUR_ORGANIZATION_WAS_BLOCK(4001045, "Login fail due your organization was block"),
     BUSINESS_CODE_EXISTED(4001046, "Business code exited"),
     FILE_NOT_EXISTED(4001047, "Avatar file not existed"),
-    ACCOUNT_EMPLOYEE_CAN_NOT_CHANGE_PASSWORD(4001048, "Account employee can not execute the function changing password")
+    ACCOUNT_EMPLOYEE_CAN_NOT_CHANGE_PASSWORD(4001048, "Account employee can not execute the function changing password"),
+    FILE_SIZE_EXCEEDED(4001049, "File size exceeds the limit")
     ;
 
     private final Integer code;

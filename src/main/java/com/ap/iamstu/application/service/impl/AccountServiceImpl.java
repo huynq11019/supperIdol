@@ -75,7 +75,7 @@ public class AccountServiceImpl implements AccountService {
             throw new ResponseException(BadRequestError.LOGIN_FAIL_BLOCK_ACCOUNT.getMessage(), BadRequestError.LOGIN_FAIL_BLOCK_ACCOUNT);
         }
         // check user
-        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUserName(request.getUsername());
+        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUsername(request.getUsername());
         if (optionalUserEntity.isEmpty()) {
             BadRequestError error = authFailCacheService.checkLoginFail(request.getUsername());
             if (error == null) {
@@ -87,7 +87,7 @@ public class AccountServiceImpl implements AccountService {
         UserEntity userEntity = optionalUserEntity.get();
         // check user bị inactive
         if (!UserStatus.ACTIVE.equals(userEntity.getStatus())) {
-            authFailCacheService.checkLoginFail(userEntity.getUserName());
+            authFailCacheService.checkLoginFail(userEntity.getUsername());
             throw new ResponseException(BadRequestError.LOGIN_FAIL_BLOCK_ACCOUNT.getMessage(), BadRequestError.LOGIN_FAIL_BLOCK_ACCOUNT);
         }
         Authentication authentication = new UsernamePasswordAuthenticationToken(request.getUsername().toLowerCase(),
@@ -119,10 +119,10 @@ public class AccountServiceImpl implements AccountService {
         UserEntity userEntity = this.userRepository.findById(userId).orElseThrow(() ->
                 new ResponseException(NotFoundError.USER_NOT_FOUND));
         if (!UserStatus.ACTIVE.equals(userEntity.getStatus())) {
-            authFailCacheService.checkLoginFail(userEntity.getUserName());
+            authFailCacheService.checkLoginFail(userEntity.getUsername());
             throw new ResponseException(BadRequestError.LOGIN_FAIL_BLOCK_ACCOUNT);
         }
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userEntity.getUserName(),
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userEntity.getUsername(),
                 "",
                 new ArrayList<>());
         String accessToken = this.tokenProvider.createToken(authentication, userEntity.getId());
@@ -140,14 +140,15 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public User register(UserRegisterRequest request) {
-        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUserName(request.getUsername());
+        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUsername(request.getUsername());
         if (optionalUserEntity.isPresent()) {
             throw new ResponseException(BadRequestError.USER_USERNAME_EXITED.getMessage(), BadRequestError.USER_USERNAME_EXITED);
         }
         UserRegisterCmd userRegisterCmd = this.autoMapper.from(request);
         String encodedPassword = this.passwordEncoder.encode(userRegisterCmd.getPassword());
         userRegisterCmd.setPassword(encodedPassword);
-        User user = new User();
+        User user = new User(userRegisterCmd);
+        log.info("userRegisterCmd: {}", user);
         this.userService.save(user);
         return user;
     }
@@ -155,7 +156,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public User myProfile() {
 //        UserAuthentication userAuthentication = SecurityUtils.authentication();
-//        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUserName(userAuthentication.getName());
+//        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUsername(userAuthentication.getName());
 //        if (optionalUserEntity.isEmpty()) {
 //            throw new ResponseException(NotFoundError.USER_NOT_FOUND.getMessage(), NotFoundError.USER_NOT_FOUND);
 //        }
@@ -169,7 +170,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public User meUpdateProfile( UserUpdateProfileRequest request) {
         UserAuthentication userAuthentication = SecurityUtils.authentication();
-        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUserName(userAuthentication.getName());
+        Optional<UserEntity> optionalUserEntity = this.userRepository.findByUsername(userAuthentication.getName());
         if (optionalUserEntity.isEmpty()) {
             throw new ResponseException(NotFoundError.USER_NOT_FOUND.getMessage(), NotFoundError.USER_NOT_FOUND);
         }
@@ -271,7 +272,7 @@ public class AccountServiceImpl implements AccountService {
 
 
     private UserEntity ensureUserExisted(String username) {
-        return this.userRepository.findByUserName(username).orElseThrow(() ->
+        return this.userRepository.findByUsername(username).orElseThrow(() ->
                 new ResponseException(NotFoundError.USER_NOT_FOUND));
     }
 
