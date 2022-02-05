@@ -63,7 +63,7 @@ spring:
     basename: i18n/labels
     cache-duration: 60    # 60 second,
   redis:
-    host: localhost
+    host: 127.0.0.1
     port: 6379
     password:
     embedded: true
@@ -78,6 +78,34 @@ security:
       access-token-expires-in: 1h
       refresh-token-expires-in: 30d
       email-token-expires-in: 10m
+
+      base64-secret: 'LNRP5b4+y9LUC3oV9WuGIf4GYT8GDYVIlHCYhywX3edfVKMrahN842YmCEVo2OX8Rs2G/eoGgKy/+/PvhT1Q4Id9pBMYdjcwJP6OyTcSUnO/tw65I/CwtYQy6uzJ+DBVkAwLoh+yPCvJym7lbVipcaD7me1BiDLp0NCfNYaetRzOxOxFcA4E67lpIHrPsb97C/SuiQL+cre7UXfFHJZxGR1tOM2IKQytUe0Q11rkPRggVTvIOfTRPeBAhvhjRLxPxpxy3Xe8LAUpdthKtKf7yFUHL+jqpwQ9cvILCLuH9sRVn6szBTrrvxMsmY79o2o8ZiGIeuDMBt4ahVdvavWt6g=='
+      # Token is valid 1 day
+      token-duration: 1
+      # Token is valid 30 days
+      token-remember-me-duration: 30
+      #refresh token duration (days)
+      refesh-token-duration: 30
+      #other data duration (minute)
+      data-duration: 5
+      #csrf-token-duration (second)
+      csrf-token-duration: 30
+    cookie:
+      domain-name:
+      enable-ssl: false
+      http-only: true
+      path: '/'
+      sameSite: 'Strict'
+  cache:
+      url-patterns: '/i18n/*,/content/*,/app/*'
+      # CORS is only enabled by default with the "dev" profile, so BrowserSync can access the API
+  cors:
+      allowed-origins: 'http://localhost:4200'
+      allowed-methods: 'GET,POST,OPTIONS'
+      allowed-headers: '*'
+      exposed-headers: 'Authorization,Link,X-Total-Count,X-Action-Message,X-Action-Params'
+      allow-credentials: true
+      max-age: 1800
 validation:
   password-regex: ^(?=.*[a-z])(?=.*[A-Z]).{8,}$ #password ?t nh?t 8 k? t? , 1 ch? th??ng, 1 ch? hoa .. advance ^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,}$
   username-regex: '^[a-zA-Z0-9]([._](?![._])|[a-zA-Z0-9]){1,72}[a-zA-Z0-9]$' #ky tu so + chu , k? t? (. _), do dai tu 3 den 75

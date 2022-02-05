@@ -9,9 +9,10 @@ import com.ap.iamstu.domain.User;
 import com.ap.iamstu.infrastructure.support.query.response.PagingResponse;
 import com.ap.iamstu.infrastructure.support.query.response.Response;
 import com.ap.iamstu.presentation.UserResource;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
+@RestController
 public class UserResourceImpl implements UserResource {
     private final UserService userService;
 

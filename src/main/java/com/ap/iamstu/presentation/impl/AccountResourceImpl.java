@@ -13,12 +13,13 @@ import com.ap.iamstu.infrastructure.support.util.StringPool;
 import com.ap.iamstu.infrastructure.support.util.StringUtil;
 import com.ap.iamstu.presentation.AccountResource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+@RestController
 public class AccountResourceImpl implements AccountResource {
     @Value("${app.iam.deep-link-reset-password}")
     private String urlResetPassword;

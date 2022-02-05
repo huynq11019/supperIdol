@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-@Api(tags = "Class Resource (Quản lý các thôn tin của các lớp học)")
+@Api(tags = "Class Resource (Quản lý các thônh tin của các lớp học)")
 @RequestMapping("/api")
 public interface ClassResource {
 
