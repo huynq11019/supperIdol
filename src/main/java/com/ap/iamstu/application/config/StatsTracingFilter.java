@@ -2,6 +2,7 @@ package com.ap.iamstu.application.config;
 
 import com.ap.iamstu.infrastructure.support.util.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import javax.servlet.*;
@@ -13,9 +14,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 
+@Configuration
 @WebFilter("/api/**")
 @Slf4j
-@Profile({"local", "dev", "prod"})
 public class StatsTracingFilter implements Filter {
 
     @Override

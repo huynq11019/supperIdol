@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
-@Slf4j
 @Configuration
 @EnableJpaRepositories("com.ap.iamstu.infrastructure.persistence.repository")
 @EnableJpaAuditing(auditorAwareRef = "springSecurityAuditorAware")

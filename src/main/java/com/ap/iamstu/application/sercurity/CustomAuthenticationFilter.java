@@ -37,7 +37,8 @@ import static com.ap.iamstu.infrastructure.support.constant.BaseConstant.*;
 @Component
 @Slf4j
 public class CustomAuthenticationFilter extends OncePerRequestFilter {
-
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER = "Bearer ";
     private final AuthorityService authorityService;
     private final TokenCacheService tokenCacheService;
 
@@ -50,7 +51,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             @NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        log.warn("CustomAuthenticationFilter doFilterInternal");
+        log.info("CustomAuthenticationFilter doFilterInternal");
         SecurityContext securityContext = SecurityContextHolder.getContext();
         JwtAuthenticationToken authentication = (JwtAuthenticationToken) securityContext.getAuthentication();
         Jwt token = authentication.getToken();
@@ -150,5 +151,15 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
             log.warn("Failed to enrich authorities for client or user {}", identifier, e);
         }
         return Optional.empty();
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
+            return bearerToken.substring(BEARER.length());
+        }
+
+        return null;
     }
 }

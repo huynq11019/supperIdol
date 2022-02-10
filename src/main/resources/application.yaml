@@ -49,14 +49,12 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: vosong9201@gmail.com
-    password: 0943390338abc
+    username: amc.building.mb@gmail.com
+    password: 123456aA@
     protocol: smtp
-    properties:
-      mail.transport.protocol: smtp
-      mail.smtp.auth: true
-      mail.smtp.starttls.enable: true
-      mail.smtp.ssl.enable: true
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
   messages:
     encoding: 'UTF-8'
     use-code-as-default-message: true
@@ -106,6 +104,11 @@ security:
       exposed-headers: 'Authorization,Link,X-Total-Count,X-Action-Message,X-Action-Params'
       allow-credentials: true
       max-age: 1800
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-setiuri: ${JWK_URI:http://localhost:8086/api/certificate/.well-known/jwks.json}
 validation:
   password-regex: ^(?=.*[a-z])(?=.*[A-Z]).{8,}$ #password ?t nh?t 8 k? t? , 1 ch? th??ng, 1 ch? hoa .. advance ^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,}$
   username-regex: '^[a-zA-Z0-9]([._](?![._])|[a-zA-Z0-9]){1,72}[a-zA-Z0-9]$' #ky tu so + chu , k? t? (. _), do dai tu 3 den 75

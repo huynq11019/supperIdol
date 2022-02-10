@@ -93,6 +93,7 @@ public class AccountServiceImpl implements AccountService {
         Authentication authentication = new UsernamePasswordAuthenticationToken(request.getUsername().toLowerCase(),
                 request.getPassword(), new ArrayList<>());
         authentication = authenticationManager.authenticate(authentication);
+
         String accessToken = this.tokenProvider.createToken(authentication, userEntity.getId());
         long expiresIn = this.authenticationProperties.getAccessTokenExpiresIn().toSeconds();
         String refreshToken = null;

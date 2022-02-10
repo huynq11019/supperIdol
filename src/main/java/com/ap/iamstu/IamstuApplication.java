@@ -23,7 +23,7 @@ public class IamstuApplication {
                 "   .hmyMy -mohhNNMMNhhh/-`                                                                          \n" +
                 "  ohMN//h+yNMMMNhhhhhhhhymo:       HIHI                                                                 \n" +
                 " :NysMh.yNMMMhys.````````..`                                                                        \n" +
-                ".hMNs/:hMMhdMdNMmo.`               `-//                                       `...`                 \n" +
+                ".hMNs/:hMMhdMdNMmo.`               `-//                                       `.. CHÀO MỌI NGƯỜI..`                 \n" +
                 ":MhmNhhMMhmNo.:+MMmdyo:-        `:+mNMm\n" +
                 "-NMdo-sMydNo`  .MMMMMdNh     .-shMMMMMM\n" +
                 "-NMmdsyN/Md    .mNMNh`dm+++ydmMMMMMMMMh\n" +

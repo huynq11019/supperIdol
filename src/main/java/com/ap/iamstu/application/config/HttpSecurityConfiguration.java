@@ -13,9 +13,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
@@ -71,9 +73,10 @@ public class HttpSecurityConfiguration extends WebSecurityConfigurerAdapter {
 //    public JwtRequestParamFilter jwtRequestParamFilter() {
 //        return new JwtRequestParamFilter();
 //    }
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        // @formatter:off
+
         http
                 .csrf()
                 .disable()
@@ -102,15 +105,13 @@ public class HttpSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v2/api-docs").permitAll()
                 .antMatchers("/api/**").authenticated()
                 .and()
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt())
                 .httpBasic()
                 .and()
                 .formLogin().disable();
-//                .and()
-//                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+        http
+                .addFilterBefore(forbiddenTokenFilter, BearerTokenAuthenticationFilter.class)
+                .addFilterBefore(customAuthenticationFilter, BearerTokenAuthenticationFilter.class);
 //    http.addFilterBefore(jwtRequestParamFilter(), BearerTokenAuthenticationFilter.class);
-        http.addFilterAfter(forbiddenTokenFilter, BearerTokenAuthenticationFilter.class);
-        http.addFilterAfter(customAuthenticationFilter, BearerTokenAuthenticationFilter.class);
-
-        // @formatter:on
     }
 }
