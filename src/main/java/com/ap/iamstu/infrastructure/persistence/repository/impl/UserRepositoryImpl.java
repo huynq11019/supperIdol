@@ -6,6 +6,7 @@ import com.ap.iamstu.infrastructure.persistence.repository.custom.UserRepository
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepositoryImpl implements UserRepositoryCustom {
@@ -14,11 +15,11 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public List<UserEntity> searchUser(UserSearchQuery searchQuery) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public Long countUser(UserSearchQuery searchQuery) {
-        return null;
+        return 0L;
     }
 }

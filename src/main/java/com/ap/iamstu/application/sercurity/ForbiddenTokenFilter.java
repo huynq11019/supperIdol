@@ -62,9 +62,9 @@ public class ForbiddenTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String token = resolveToken(request);
-
-        log.info("token: {}", token);
+//        String token = resolveToken(request);
+//
+//        log.info("token: {}", token);
 
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
