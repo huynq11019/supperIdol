@@ -54,7 +54,7 @@ public class SendMailServiceImpl implements SendEmailService {
         context.setVariable(TOKEN, token);
         context.setVariable(LINK, redirectLink);
         String content = templateEngine.process(templateName, context);
-        String subject = messageSource.getMessage(titleKey, null, locale);
+        String subject = "EMAIL_RESET_PASSWORD";
         mailService.sendHtmlMail(user.getEmail(), subject, content);
     }
 }

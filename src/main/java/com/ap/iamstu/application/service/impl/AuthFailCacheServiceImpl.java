@@ -35,25 +35,25 @@ public class AuthFailCacheServiceImpl implements AuthFailCacheService {
     public BadRequestError checkLoginFail(String username) {
         try {
             // check user đăng nhập sai lần đầu
+            log.info("Check login fail for user {}", username);
             if (!isExisted(LOGIN_FAIL_COUNT_CACHE, username)) {
+                log.info("User {} is not existed in cache", username);
                 Optional.ofNullable(cacheManager.getCache(LOGIN_FAIL_COUNT_CACHE))
-                        .ifPresent(cache -> cache.put(username, 1L));
+                        .ifPresent(cache -> cache.put(username, 1));
             } else {
-
-                Integer loginFailCount = (Integer) Optional.ofNullable(cacheManager.getCache(LOGIN_FAIL_COUNT_CACHE))
-                        .map(cache -> cache.get(username))
-                        .filter(valueWrapper -> Objects.nonNull(valueWrapper.get())).get().get();
-
+                Integer loginFailCount = (Integer) cacheManager.getCache(LOGIN_FAIL_COUNT_CACHE).get(username).get();
+                log.info("User {} login fail count is {}", username, loginFailCount);
                 if (loginFailCount == null) {
                     Optional.ofNullable(cacheManager.getCache(LOGIN_FAIL_COUNT_CACHE))
-                            .ifPresent(cache -> cache.put(username, 1L));
+                            .ifPresent(cache -> cache.put(username, 1));
                     return null;
                 }
 
                 if (loginFailCount > REACH_MAX_LOGIN_FAIL_COUNT) {
                     // login fail quá 5 lần thì đưa user vào danh sách block
+                    log.info("User {} reach max login fail count", username);
                     Optional.ofNullable(cacheManager.getCache(BLOCKED_USER_LOGIN_CACHE))
-                            .ifPresent(cache -> cache.put(username, 1L));
+                            .ifPresent(cache -> cache.put(username, 1));
                 } else {
                     // nếu đăng nhập sai thì tăng số lần đăng nhập sai lên 1
                     final Integer newLoginFailCount = loginFailCount + 1;
@@ -62,7 +62,7 @@ public class AuthFailCacheServiceImpl implements AuthFailCacheService {
 
                     if (Objects.equals(newLoginFailCount, REACH_MAX_LOGIN_FAIL_COUNT)) {
                         Optional.ofNullable(cacheManager.getCache(BLOCKED_USER_LOGIN_CACHE))
-                                .ifPresent(cache -> cache.put(username, 1L));
+                                .ifPresent(cache -> cache.put(username, 1));
                         return BadRequestError.LOGIN_FAIL_BLOCK_ACCOUNT;
                     }
                     if (newLoginFailCount > REACH_WARNING_BEFORE_BLOCK_LOGIN_FAIL_COUNT) {

@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +34,7 @@ public interface UserResource {
     Response<User> createUserStudent(@RequestBody @Valid UserInternalCreateRequest request);
 
     @ApiOperation(value = "Search user")
-    @PostMapping("/users")
+    @GetMapping("/users")
     PagingResponse<User> searchUser(@ValidatePaging(allowedSorts = {"lastModifiedAt", "createdAt"})
                                             UserSearchRequest request);
 

@@ -43,7 +43,7 @@ public class ForbiddenTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse httpServletResponse, FilterChain filterChain)
             throws ServletException, IOException {
         String token = resolveToken(httpServletRequest);
-
+        log.info("token: {}", token);
         if (tokenCacheService.isInvalidToken(token)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "InvalidJWT");
@@ -62,6 +62,10 @@ public class ForbiddenTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
+//        String token = resolveToken(request);
+//
+//        log.info("token: {}", token);
+
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         if (authentication == null) {

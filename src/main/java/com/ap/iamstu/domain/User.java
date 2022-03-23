@@ -1,13 +1,14 @@
 package com.ap.iamstu.domain;
 
 import com.ap.iamstu.domain.command.UserCreateCmd;
+import com.ap.iamstu.domain.command.UserRegisterCmd;
 import com.ap.iamstu.infrastructure.support.domain.AuditableDomain;
 import com.ap.iamstu.infrastructure.support.enums.AccountType;
 import com.ap.iamstu.infrastructure.support.enums.AuthenticationType;
 import com.ap.iamstu.infrastructure.support.enums.Gender;
+import com.ap.iamstu.infrastructure.support.enums.UserStatus;
 import com.ap.iamstu.infrastructure.support.util.IdUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,7 +16,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
@@ -49,6 +49,7 @@ public class User extends AuditableDomain {
     private String avatarFileUrl;
     private AccountType accountType;
     private Instant lastAuthChangeAt;
+    private UserStatus status = UserStatus.ACTIVE;
 
     @JsonIgnore
     private List<UserRole> userRoles;
@@ -64,36 +65,27 @@ public class User extends AuditableDomain {
         this.gender = userCreateCmd.getGender();
         this.avatarFileId = userCreateCmd.getAvatarFileId();
         this.roles = userCreateCmd.getRoles();
+
         this.deleted = userCreateCmd.getDeleted();
+        this.status = UserStatus.ACTIVE;
 
     }
 
-    public User( String username, String password, String fullName, String email, String phoneNumber, LocalDate dayOfBirth, Gender gender, List<Role> roles, AuthenticationType authenticationType, String organizationId, String employeeCode, String title, String description, String departmentName, String avatarFileId, String avatarFileUrl, AccountType accountType, List<UserRole> userRoles) {
-        this.id = UUID.randomUUID().toString();
-        this.username = username;
-        this.password = password;
-        this.fullName = fullName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.dayOfBirth = dayOfBirth;
-        this.gender = gender;
-        this.roles = roles;
-        this.authenticationType = authenticationType;
-        this.organizationId = organizationId;
-        this.employeeCode = employeeCode;
-        this.title = title;
-        this.description = description;
-        this.departmentName = departmentName;
-        this.avatarFileId = avatarFileId;
-        this.avatarFileUrl = avatarFileUrl;
-        this.accountType = accountType;
-        this.userRoles = userRoles;
+    public User(UserRegisterCmd userRegisterCmd) {
+        this.id = IdUtils.nextId();
+        this.username = userRegisterCmd.getUsername();
+        this.password = userRegisterCmd.getPassword();
+        this.fullName = userRegisterCmd.getFullName();
+        this.email = userRegisterCmd.getEmail();
+        this.phoneNumber = userRegisterCmd.getPhoneNumber();
 
+        this.status = UserStatus.ACTIVE;
+        this.gender = Gender.OTHER;
         this.deleted = false;
-
     }
 
-    public void update(String username, String password, String fullName, String email, String phoneNumber, LocalDate dayOfBirth) {
+    public void update(String username, String password, String fullName, String email, String
+            phoneNumber, LocalDate dayOfBirth) {
         this.username = username;
         this.password = password;
         this.fullName = fullName;
@@ -122,4 +114,35 @@ public class User extends AuditableDomain {
 //    public void updatePermission(String permissionId) {
 //        this.roles.add(new Role(permissionId));
 //    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", dayOfBirth=" + dayOfBirth +
+                ", gender=" + gender +
+                ", roles=" + roles +
+                ", deleted=" + deleted +
+                ", authenticationType=" + authenticationType +
+                ", organizationId='" + organizationId + '\'' +
+                ", employeeCode='" + employeeCode + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", departmentName='" + departmentName + '\'' +
+                ", avatarFileId='" + avatarFileId + '\'' +
+                ", avatarFileUrl='" + avatarFileUrl + '\'' +
+                ", accountType=" + accountType +
+                ", lastAuthChangeAt=" + lastAuthChangeAt +
+                ", userRoles=" + userRoles +
+                ", createdBy='" + createdBy + '\'' +
+                ", createdAt=" + createdAt +
+                ", lastModifiedBy='" + lastModifiedBy + '\'' +
+                ", lastModifiedAt=" + lastModifiedAt +
+                '}';
+    }
 }

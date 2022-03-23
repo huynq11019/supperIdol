@@ -43,7 +43,7 @@ public class CustomUserDetailService implements UserDetailsService {
             }
         } else {
 //            Đămg nhập bằng user Name
-            Optional<UserEntity> optionalUser = userRepository.findByUserName(userName);
+            Optional<UserEntity> optionalUser = userRepository.findByUsername(userName);
             if (optionalUser.isPresent()) {
                 user = optionalUser.get();
             }
@@ -60,6 +60,6 @@ public class CustomUserDetailService implements UserDetailsService {
         Set<GrantedAuthority> authorities = new HashSet<>();
         List<String> listAuthorities = authorityService.getUserAuthority(userEntity.getId()).getGrantedPermissions();
         authorities = listAuthorities.isEmpty() ? authorities : listAuthorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
-        return new User(userEntity.getUserName(), userEntity.getPassword(), authorities);
+        return new User(userEntity.getUsername(), userEntity.getPassword(), authorities);
     }
 }

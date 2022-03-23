@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -56,7 +57,7 @@ public class UserServiceImpl extends AbstractDomainService<User, UserEntity, Str
     @Override
     public PageDTO<User> searchUser(UserSearchRequest userSearchRequest) {
         Long count = this.userRepository.countUser(this.autoMapper.toQuery(userSearchRequest));
-        if (count == 0) {
+        if (Objects.equals(count, 0L)) {
             return new PageDTO<>(new ArrayList<>(), 0, 0, 0L);
         }
 
